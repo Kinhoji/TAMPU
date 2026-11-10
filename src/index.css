@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { font-family: 'DM Sans', sans-serif; color: #19302a; font-synthesis: none; text-rendering: optimizeLegibility; }
+* { -webkit-tap-highlight-color: transparent; }
+body { margin: 0; min-width: 320px; min-height: 100vh; background: #111b19; }
+button { font: inherit; }
+::selection { background: #bbf7d0; }
+.font-display { font-family: 'Manrope', sans-serif; }
+.scrollbar-hide { scrollbar-width: none; }
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+@keyframes sheet { from { transform: translateY(100%); opacity: .7; } to { transform: translateY(0); opacity: 1; } }
