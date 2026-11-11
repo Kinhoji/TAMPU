@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, ArrowUpRight, BadgeCheck, Bike, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight, Compass, Flower2, Heart, Home, MapPin, Minus, PackageCheck, Plus, Recycle, ShieldCheck, ShoppingBasket, Smartphone, Sparkles, Star, UserRound, WalletCards, X, Zap, Store, ChevronLeft, ListTodo, Store as StoreIcon, Camera, Trash2, PlusCircle, Image as ImageIcon, Map, Navigation, Banknote, MapPinned } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, BadgeCheck, Bike, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight, Compass, Flower2, Heart, Home, MapPin, Minus, PackageCheck, Plus, Recycle, ShieldCheck, ShoppingBasket, Smartphone, Sparkles, Star, UserRound, WalletCards, X, Zap, Store, ChevronLeft, ListTodo, Store as StoreIcon, Camera, Trash2, PlusCircle, Image as ImageIcon, Map as MapIcon, Navigation, Banknote, MapPinned } from 'lucide-react'
 
 // --- TIPOS Y DATOS ORIGINALES ---
 interface Casera { id: string; nombre: string; puesto: string; rating: number; especialidad: string; fotoUrl: string }
@@ -131,14 +131,13 @@ function SignUpScreen({ role, onBack, onSignUp }: { role: Role; onBack: () => vo
   )
 }
 
-
-// --- APP DEL DELIVERY (NUEVA) ---
+// --- APP DEL DELIVERY ---
 interface Entrega {
   id: string;
   cliente: string;
   direccion: string;
   referencia: string;
-  caseraInfo: string; // Ej: "Doña Rosa - Puesto 42"
+  caseraInfo: string; 
   estado: 'recojo' | 'transito' | 'entregado';
   montoGanancia: number;
 }
@@ -157,7 +156,6 @@ function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
   const [subView, setSubView] = useState<DeliverySubView>('none')
   const [entregaActiva, setEntregaActiva] = useState<Entrega | null>(null)
 
-  // Sub-views Navigation
   if (subView === 'mapa' && entregaActiva) {
     return <DeliveryMapaScreen entrega={entregaActiva} onBack={() => setSubView('none')} onArrived={() => setSubView('foto-entrega')} />
   }
@@ -175,7 +173,6 @@ function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
     )
   }
 
-  // Dashboard Main View
   const entregasActivas = entregas.filter(e => e.estado !== 'entregado');
   const entregasCompletadas = entregas.filter(e => e.estado === 'entregado');
   const gananciasHoy = entregasCompletadas.reduce((sum, e) => sum + e.montoGanancia, 0);
@@ -187,8 +184,6 @@ function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
   return (
     <main className="relative h-[100dvh] w-full overflow-hidden bg-[#f4f7f9] text-[#2c3e50]">
       <div className="scrollbar-hide absolute inset-0 overflow-y-auto pb-[90px]">
-        
-        {/* Cabecera Principal Delivery */}
         <div className="bg-[#4A8BBA] px-6 pb-6 pt-6 text-white rounded-b-[30px] shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <div className="rounded-[10px] bg-white px-2 py-1 shadow-sm">
@@ -224,7 +219,6 @@ function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
                 entregasActivas.map(entrega => (
                   <div key={entrega.id} className="rounded-[22px] border border-[#e1e9ee] bg-white p-5 shadow-sm">
                     {entrega.estado === 'recojo' ? (
-                      // ESTADO 1: RECOGER DE LA CASERA
                       <>
                         <div className="mb-3 flex items-center justify-between border-b border-[#f0f4f7] pb-3">
                           <div className="flex items-center gap-2 rounded-full bg-[#fff0e8] px-2.5 py-1 text-[10px] font-bold text-[#F3793B]"><StoreIcon size={12}/> Recoger pedido</div>
@@ -239,7 +233,6 @@ function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
                         </button>
                       </>
                     ) : (
-                      // ESTADO 2: ENTREGAR AL CLIENTE
                       <>
                         <div className="mb-3 flex items-center justify-between border-b border-[#f0f4f7] pb-3">
                           <div className="flex items-center gap-2 rounded-full bg-[#e3f0f7] px-2.5 py-1 text-[10px] font-bold text-[#4A8BBA]"><Navigation size={12}/> En camino</div>
@@ -254,7 +247,6 @@ function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
                             <p className="mt-0.5 text-[#718596]">{entrega.referencia}</p>
                           </div>
                         </div>
-
                         <button onClick={() => { setEntregaActiva(entrega); setSubView('mapa'); }} className="mt-5 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#4A8BBA] py-3.5 text-[13px] font-bold text-white shadow-sm active:scale-95">
                           <MapPinned size={18}/> Ver mapa y entregar
                         </button>
@@ -299,14 +291,13 @@ function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
       </div>
 
       <nav className="absolute inset-x-0 bottom-0 z-20 flex h-[80px] items-center justify-around border-t border-[#e1e9ee] bg-[#ffffff] px-2 pb-4 pt-2 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
-        <button onClick={() => setActiveTab('rutas')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'rutas' ? 'text-[#4A8BBA]' : 'text-[#8da3b5]'}`}><span className={`text-[10px] ${activeTab === 'rutas' ? 'font-extrabold' : 'font-medium'}`}>Rutas</span></button>
+        <button onClick={() => setActiveTab('rutas')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'rutas' ? 'text-[#4A8BBA]' : 'text-[#8da3b5]'}`}><MapIcon size={24} className={activeTab === 'rutas' ? 'fill-[#e3f0f7]' : ''} /><span className={`text-[10px] ${activeTab === 'rutas' ? 'font-extrabold' : 'font-medium'}`}>Rutas</span></button>
         <button onClick={() => setActiveTab('ganancias')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'ganancias' ? 'text-[#4A8BBA]' : 'text-[#8da3b5]'}`}><WalletCards size={24} className={activeTab === 'ganancias' ? 'fill-[#e3f0f7]' : ''} /><span className={`text-[10px] ${activeTab === 'ganancias' ? 'font-extrabold' : 'font-medium'}`}>Ganancias</span></button>
       </nav>
     </main>
   )
 }
 
-// --- SUB-VISTAS DEL DELIVERY ---
 function DeliveryMapaScreen({ entrega, onBack, onArrived }: { entrega: Entrega, onBack: () => void, onArrived: () => void }) {
   return (
     <main className="flex h-[100dvh] w-full flex-col bg-[#f4f7f9]">
@@ -316,7 +307,6 @@ function DeliveryMapaScreen({ entrega, onBack, onArrived }: { entrega: Entrega, 
         <div className="w-10" />
       </header>
       
-      {/* Fake Map Implementation (reusing and adapting the SVG from TrackingScreen) */}
       <div className="relative flex-1 bg-[#e9efdf] pt-20">
         <svg viewBox="0 0 360 400" className="absolute inset-0 h-full w-full object-cover" preserveAspectRatio="xMidYMid slice">
           <rect width="360" height="600" fill="#e8eddf"/>
@@ -325,15 +315,8 @@ function DeliveryMapaScreen({ entrega, onBack, onArrived }: { entrega: Entrega, 
           <path d="M125 190 L180 120 L240 85" fill="none" stroke="#4A8BBA" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
           <text x="186" y="196" fill="#74846d" fontSize="9" fontFamily="DM Sans" fontWeight="600" transform="rotate(20 186 196)">Ruta sugerida</text>
         </svg>
-        
-        {/* Delivery Pin */}
-        <div className="absolute left-[30%] top-[45%] flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-[#4A8BBA] text-white shadow-lg">
-          <Bike size={18} fill="currentColor"/>
-        </div>
-        {/* Destination Pin */}
-        <div className="absolute left-[62%] top-[18%] flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-[#719B5C] text-white shadow-lg">
-          <MapPin size={14} fill="currentColor"/>
-        </div>
+        <div className="absolute left-[30%] top-[45%] flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-[#4A8BBA] text-white shadow-lg"><Bike size={18} fill="currentColor"/></div>
+        <div className="absolute left-[62%] top-[18%] flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-[#719B5C] text-white shadow-lg"><MapPin size={14} fill="currentColor"/></div>
       </div>
 
       <div className="rounded-t-[30px] bg-white px-6 pb-8 pt-6 shadow-[0_-20px_40px_rgba(0,0,0,0.08)] z-20">
@@ -383,6 +366,292 @@ function DeliveryFotoEntrega({ entrega, onBack, onConfirm }: { entrega: Entrega,
         </button>
       </div>
     </main>
+  )
+}
+
+// --- APP DE LA CASERA ---
+interface ItemVenta { id: string; nombre: string; emoji: string; disponible: boolean; precio: number; unidad: string }
+interface PedidoCliente { id: string; cliente: string; items: string[]; estado: 'pendiente' | 'armado' }
+
+const inventarioInicial: ItemVenta[] = [
+  { id: '1', nombre: 'Papa Imilla', emoji: '🥔', disponible: true, precio: 35, unidad: 'Arroba' },
+  { id: '2', nombre: 'Tomate Perita', emoji: '🍅', disponible: true, precio: 5, unidad: 'Kilo' },
+  { id: '3', nombre: 'Cebolla Morada', emoji: '🧅', disponible: false, precio: 12, unidad: 'Cuartilla' },
+  { id: '4', nombre: 'Zanahoria', emoji: '🥕', disponible: true, precio: 3, unidad: 'Atado' },
+  { id: '5', nombre: 'Brócoli', emoji: '🥦', disponible: true, precio: 5, unidad: 'Unidad' },
+]
+
+const pedidosIniciales: PedidoCliente[] = [
+  { id: 'P01', cliente: 'María López', items: ['🥔 1 Arroba de Papa', '🍅 2 Kilos de Tomate', '🥕 1 Atado de Zanahoria'], estado: 'pendiente' },
+  { id: 'P02', cliente: 'Familia Vargas', items: ['🥦 2 Unidades de Brócoli', '🍅 1 Kilo de Tomate'], estado: 'pendiente' },
+]
+
+type CaseraSubView = 'none' | 'lista-pedidos' | 'foto-canasta' | 'editar-inventario'
+
+function CaseraDashboard({ onLogout }: { onLogout: () => void }) {
+  const [activeTab, setActiveTab] = useState<'pedidos' | 'puesto'>('pedidos')
+  const [inventario, setInventario] = useState<ItemVenta[]>(inventarioInicial)
+  const [pedidos, setPedidos] = useState<PedidoCliente[]>(pedidosIniciales)
+  
+  const [subView, setSubView] = useState<CaseraSubView>('none')
+  const [editingItem, setEditingItem] = useState<ItemVenta | null>(null)
+  const [pedidoActivo, setPedidoActivo] = useState<PedidoCliente | null>(null)
+
+  if (subView === 'lista-pedidos') {
+    return <CaseraPedidosList pedidos={pedidos} onBack={() => setSubView('none')} onArmar={(p) => { setPedidoActivo(p); setSubView('foto-canasta'); }} />
+  }
+  if (subView === 'foto-canasta' && pedidoActivo) {
+    return (
+      <CaseraArmarFoto 
+        pedido={pedidoActivo} 
+        onBack={() => setSubView('lista-pedidos')} 
+        onConfirm={() => {
+          setPedidos(prev => prev.map(p => p.id === pedidoActivo.id ? { ...p, estado: 'armado' } : p));
+          setSubView('lista-pedidos');
+          setPedidoActivo(null);
+        }} 
+      />
+    )
+  }
+  if (subView === 'editar-inventario') {
+    return <CaseraEditarInventario inventario={inventario} setInventario={setInventario} onBack={() => setSubView('none')} />
+  }
+
+  const toggleDisponible = (id: string) => { setInventario(inv => inv.map(item => item.id === id ? { ...item, disponible: !item.disponible } : item)) }
+  const saveItem = (updatedItem: ItemVenta) => { setInventario(inv => inv.map(item => item.id === updatedItem.id ? updatedItem : item)); setEditingItem(null) }
+  
+  const pendientesCount = pedidos.filter(p => p.estado === 'pendiente').length;
+
+  return (
+    <main className="relative h-[100dvh] w-full overflow-hidden bg-[#fafbf9] text-[#3A4B40]">
+      <div className="scrollbar-hide absolute inset-0 overflow-y-auto pb-[90px]">
+        <div className="bg-[#F3793B] px-6 pb-6 pt-6 text-white rounded-b-[30px] shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="rounded-[10px] bg-white px-2 py-1 shadow-sm">
+              <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[22px] w-auto object-contain" />
+            </div>
+            <button onClick={onLogout} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md transition-all active:scale-95">
+              <UserRound size={18} className="text-white" />
+            </button>
+          </div>
+          <div>
+            <p className="text-[11px] font-medium text-white/80">Puesto 42, La Cancha</p>
+            <h1 className="font-display text-[26px] font-extrabold tracking-tight">¡Buen día, Doña Rosa!</h1>
+          </div>
+        </div>
+
+        {activeTab === 'pedidos' && (
+          <div className="px-5 pt-6">
+            <h2 className="mb-4 font-display text-[18px] font-extrabold text-[#3A4B40]">Pedidos para hoy</h2>
+            <div className="flex flex-col gap-4">
+              <div className="rounded-[22px] border border-[#e8ede6] bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef7e9] text-[#719B5C]"><ShoppingBasket size={24}/></div>
+                  <div><p className="text-[12px] text-[#6e8074]">Canastas a preparar</p><p className="font-display text-[22px] font-extrabold text-[#3A4B40]">{pendientesCount} <span className="text-[12px] font-medium text-[#F3793B]">pendientes</span></p></div>
+                </div>
+              </div>
+            </div>
+            <button onClick={() => setSubView('lista-pedidos')} className="mt-6 flex w-full items-center justify-center gap-2 rounded-[16px] bg-[#3A4B40] py-4 text-[13px] font-bold text-white shadow-lg transition-transform active:scale-[0.98]">
+              Ver lista de verduras a preparar <ArrowRight size={18} />
+            </button>
+          </div>
+        )}
+
+        {activeTab === 'puesto' && (
+          <div className="px-5 pt-6">
+            <div className="mb-5 flex items-center justify-between">
+              <div>
+                <h2 className="font-display text-[18px] font-extrabold text-[#3A4B40]">Tus verduras de hoy</h2>
+                <p className="text-[11px] text-[#7c8b82]">Marca lo que tienes para vender.</p>
+              </div>
+              <button onClick={() => setSubView('editar-inventario')} className="flex items-center gap-1 rounded-full bg-[#f4e8e1] px-3 py-1.5 text-[10px] font-bold text-[#F3793B] active:scale-95">
+                Editar Lista <Plus size={12}/>
+              </button>
+            </div>
+            
+            <div className="flex flex-col gap-3">
+              {inventario.map(item => (
+                <div key={item.id} className={`flex items-center justify-between rounded-[20px] border p-3 transition-all ${item.disponible ? 'border-[#e4eadf] bg-white shadow-sm' : 'border-[#f0f3eb] bg-[#f8faf7] opacity-75'}`}>
+                  <div className="flex items-center gap-3">
+                    <div className="text-[32px]">{item.emoji}</div>
+                    <div>
+                      <p className={`font-display text-[14px] font-extrabold ${item.disponible ? 'text-[#3A4B40]' : 'text-[#8b9c91]'}`}>{item.nombre}</p>
+                      {item.disponible ? (
+                        <p className="text-[11px] font-bold text-[#F3793B]">{item.precio} Bs <span className="font-normal text-[#8b9c91]">el {item.unidad.toLowerCase()}</span></p>
+                      ) : (
+                        <p className="text-[11px] font-medium text-[#a3b1a8]">No tienes hoy</p>
+                      )}
+                    </div>
+                  </div>
+                  
+                  <div className="flex flex-col items-end gap-2">
+                    <button onClick={() => toggleDisponible(item.id)} className={`flex h-8 items-center justify-center rounded-full px-4 text-[10px] font-bold transition-all ${item.disponible ? 'bg-[#e9f5ed] text-[#34764c]' : 'bg-[#e4e9e1] text-[#69796e]'}`}>
+                      {item.disponible ? 'SÍ HAY' : 'SE ACABÓ'}
+                    </button>
+                    {item.disponible && <button onClick={() => setEditingItem(item)} className="text-[11px] font-bold text-[#719B5C] underline-offset-2 hover:underline">Cambiar precio</button>}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      <nav className="absolute inset-x-0 bottom-0 z-20 flex h-[80px] items-center justify-around border-t border-[#e9ede5] bg-[#fffefa] px-2 pb-4 pt-2 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
+        <button onClick={() => setActiveTab('pedidos')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'pedidos' ? 'text-[#F3793B]' : 'text-[#a1b0a6]'}`}><ListTodo size={24} className={activeTab === 'pedidos' ? 'fill-[#fff0e8]' : ''} /><span className={`text-[10px] ${activeTab === 'pedidos' ? 'font-extrabold' : 'font-medium'}`}>Pedidos</span></button>
+        <button onClick={() => setActiveTab('puesto')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'puesto' ? 'text-[#F3793B]' : 'text-[#a1b0a6]'}`}><StoreIcon size={24} className={activeTab === 'puesto' ? 'fill-[#fff0e8]' : ''} /><span className={`text-[10px] ${activeTab === 'puesto' ? 'font-extrabold' : 'font-medium'}`}>Mi Puesto</span></button>
+      </nav>
+
+      {editingItem && <BottomSheet onClose={() => setEditingItem(null)}><EditPriceCaseraSheet item={editingItem} onSave={saveItem} onClose={() => setEditingItem(null)} /></BottomSheet>}
+    </main>
+  )
+}
+
+function CaseraPedidosList({ pedidos, onBack, onArmar }: { pedidos: PedidoCliente[], onBack: () => void, onArmar: (p: PedidoCliente) => void }) {
+  return (
+    <main className="flex h-[100dvh] w-full flex-col bg-[#fafbf9]">
+      <header className="flex flex-col bg-white px-5 pb-4 pt-5 shadow-sm">
+        <div className="mb-4 flex items-center">
+          <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[24px] w-auto object-contain" />
+        </div>
+        <div className="flex items-center gap-4">
+          <button onClick={onBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4f7f2] text-[#55695d] active:scale-95"><ChevronLeft size={20}/></button>
+          <div><h1 className="font-display text-[18px] font-extrabold text-[#3A4B40]">Cuaderno de Pedidos</h1><p className="text-[11px] text-[#7a8a80]">Revisa qué armar hoy</p></div>
+        </div>
+      </header>
+      
+      <div className="flex-1 overflow-y-auto px-5 py-6">
+        <div className="flex flex-col gap-4">
+          {pedidos.map(p => (
+            <div key={p.id} className={`rounded-[22px] border ${p.estado === 'armado' ? 'border-[#d4ebd8] bg-[#f2f9f4]' : 'border-[#e4eadf] bg-white'} p-4 shadow-sm`}>
+              <div className="mb-3 border-b border-[#f0f3eb] pb-2">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-[#69796e]">Cliente</p>
+                <p className="font-display text-[16px] font-extrabold text-[#3A4B40]">{p.cliente}</p>
+              </div>
+              <ul className="mb-4 flex flex-col gap-2">
+                {p.items.map((item, i) => <li key={i} className="text-[12px] font-medium text-[#4a5c51]">{item}</li>)}
+              </ul>
+              {p.estado === 'pendiente' ? (
+                <button onClick={() => onArmar(p)} className="flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#F3793B] py-3.5 text-[12px] font-bold text-white shadow-sm active:scale-95">
+                  Armar canasta y avisar <Camera size={16}/>
+                </button>
+              ) : (
+                <div className="flex items-center justify-center gap-2 rounded-[14px] bg-[#e1f0e5] py-3.5 text-[12px] font-bold text-[#2d6642]"><Bike size={16}/> A espera de recojo del delivery</div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </main>
+  )
+}
+
+function CaseraArmarFoto({ pedido, onBack, onConfirm }: { pedido: PedidoCliente, onBack: () => void, onConfirm: () => void }) {
+  const [tomandoFoto, setTomandoFoto] = useState(false);
+  const handleConfirm = () => { setTomandoFoto(true); setTimeout(() => onConfirm(), 1200); }
+  return (
+    <main className="flex h-[100dvh] w-full flex-col bg-[#111814] text-white">
+      <header className="flex flex-col bg-[#111814] px-5 py-5 text-white">
+        <div className="mb-4 flex items-center">
+          <div className="rounded-[10px] bg-white px-2 py-1 shadow-sm">
+             <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[20px] w-auto object-contain" />
+          </div>
+        </div>
+        <div className="flex items-center justify-between">
+          <button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 active:scale-95"><X size={20}/></button>
+          <p className="text-[12px] font-bold tracking-wider text-white/70">FOTO PARA EL CLIENTE</p>
+          <div className="w-10" />
+        </div>
+      </header>
+      
+      <div className="flex flex-col items-center px-6 pt-4 text-center">
+        <h2 className="font-display text-[22px] font-extrabold">Canasta de {pedido.cliente}</h2>
+        <p className="mt-2 text-[12px] text-white/70">Muestra qué bonita y fresca te quedó la canasta. El cliente recibirá esta foto.</p>
+      </div>
+      <div className="mx-6 mt-8 flex flex-1 flex-col items-center justify-center rounded-[32px] border-4 border-dashed border-white/20 bg-white/5">
+        {tomandoFoto ? (
+          <div className="flex flex-col items-center gap-3"><div className="h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-[#F3793B]" /><p className="text-[12px] font-bold text-white/80">Guardando foto...</p></div>
+        ) : (
+          <><ImageIcon size={64} className="mb-4 text-white/30" /><p className="text-[14px] font-bold text-white/50">Toca para abrir tu cámara</p></>
+        )}
+      </div>
+      <div className="p-6 pb-10">
+        <button disabled={tomandoFoto} onClick={handleConfirm} className="flex w-full items-center justify-center gap-2 rounded-[20px] bg-[#F3793B] py-5 text-[14px] font-bold text-white shadow-lg active:scale-[0.98] disabled:opacity-70">
+          <CheckCircle2 size={20}/> {tomandoFoto ? 'Enviando...' : 'Simular que tomé la foto'}
+        </button>
+      </div>
+    </main>
+  )
+}
+
+function CaseraEditarInventario({ inventario, setInventario, onBack }: { inventario: ItemVenta[], setInventario: (inv: ItemVenta[]) => void, onBack: () => void }) {
+  const [nuevoEmoji, setNuevoEmoji] = useState('')
+  const [nuevoNombre, setNuevoNombre] = useState('')
+
+  const handleAdd = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nuevoEmoji || !nuevoNombre) return;
+    const newItem: ItemVenta = { id: Date.now().toString(), nombre: nuevoNombre, emoji: nuevoEmoji, disponible: true, precio: 10, unidad: 'Kilo' }
+    setInventario([...inventario, newItem]);
+    setNuevoEmoji(''); setNuevoNombre('');
+  }
+  const handleRemove = (id: string) => { setInventario(inventario.filter(item => item.id !== id)); }
+
+  return (
+    <main className="flex h-[100dvh] w-full flex-col bg-white">
+      <header className="flex flex-col border-b border-[#f0f3eb] bg-white px-5 pb-4 pt-5">
+        <div className="mb-4 flex items-center">
+          <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[24px] w-auto object-contain" />
+        </div>
+        <div className="flex items-center gap-4">
+          <button onClick={onBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4f7f2] text-[#55695d] active:scale-95"><ChevronLeft size={20}/></button>
+          <div><h1 className="font-display text-[18px] font-extrabold text-[#3A4B40]">Editar mi Puesto</h1><p className="text-[11px] text-[#7a8a80]">Agrega o quita verduras de tu lista</p></div>
+        </div>
+      </header>
+      
+      <div className="flex-1 overflow-y-auto px-5 py-6">
+        <form onSubmit={handleAdd} className="mb-8 rounded-[22px] border border-[#e4eadf] bg-[#f9fcf8] p-4 shadow-sm">
+          <p className="mb-3 text-[11px] font-bold uppercase text-[#69796e]">Agregar nueva verdura</p>
+          <div className="flex gap-2">
+            <input type="text" placeholder="🥬" maxLength={2} value={nuevoEmoji} onChange={e => setNuevoEmoji(e.target.value)} className="w-14 rounded-[14px] border border-[#dce3d6] bg-white text-center text-[20px] outline-none focus:border-[#719B5C]" required />
+            <input type="text" placeholder="Ej. Lechuga Crespa" value={nuevoNombre} onChange={e => setNuevoNombre(e.target.value)} className="flex-1 rounded-[14px] border border-[#dce3d6] bg-white px-3 text-[13px] font-bold text-[#3A4B40] outline-none focus:border-[#719B5C]" required />
+          </div>
+          <button type="submit" className="mt-3 flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#719B5C] py-3 text-[12px] font-bold text-white active:scale-[0.98]">
+            Agregar a la lista <PlusCircle size={16}/>
+          </button>
+        </form>
+
+        <p className="mb-3 text-[11px] font-bold uppercase text-[#69796e]">Verduras en tu lista</p>
+        <div className="flex flex-col gap-2">
+          {inventario.map(item => (
+            <div key={item.id} className="flex items-center justify-between rounded-[16px] border border-[#f0f3eb] p-3">
+              <div className="flex items-center gap-3">
+                <span className="text-[24px]">{item.emoji}</span>
+                <span className="font-display text-[14px] font-extrabold text-[#3A4B40]">{item.nombre}</span>
+              </div>
+              <button onClick={() => handleRemove(item.id)} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ffeaeb] text-[#E46A60] active:scale-95"><Trash2 size={16}/></button>
+            </div>
+          ))}
+        </div>
+      </div>
+    </main>
+  )
+}
+
+function EditPriceCaseraSheet({ item, onSave, onClose }: { item: ItemVenta, onSave: (item: ItemVenta) => void, onClose: () => void }) {
+  const [precio, setPrecio] = useState(item.precio)
+  const [unidad, setUnidad] = useState(item.unidad)
+  const unidades = ['Kilo', 'Arroba', 'Cuartilla', 'Atado', 'Unidad', 'Libra']
+
+  return (
+    <>
+      <div className="mb-4 flex items-center justify-between border-b border-[#f0f3eb] pb-3"><div className="flex items-center gap-2"><span className="text-2xl">{item.emoji}</span><h2 className="font-display text-[20px] font-extrabold text-[#3A4B40]">{item.nombre}</h2></div><button onClick={onClose} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f7f1] text-[#69796e]"><X size={20}/></button></div>
+      <p className="mb-2 text-[12px] font-bold uppercase text-[#6e8074]">1. ¿Cómo lo vendes?</p>
+      <div className="mb-6 flex flex-wrap gap-2">{unidades.map(u => (<button key={u} onClick={() => setUnidad(u)} className={`rounded-full px-4 py-2.5 text-[13px] font-bold transition-all ${unidad === u ? 'bg-[#F3793B] text-white shadow-md' : 'border border-[#e1e6de] bg-white text-[#56665c]'}`}>{u}</button>))}</div>
+      <p className="mb-2 text-[12px] font-bold uppercase text-[#6e8074]">2. Precio por {unidad.toLowerCase()}</p>
+      <div className="mb-8 flex items-center justify-between rounded-[24px] bg-[#f8faf7] p-3"><button onClick={() => setPrecio(Math.max(1, precio - 1))} className="flex h-16 w-16 items-center justify-center rounded-[18px] bg-white text-[#E46A60] shadow-sm active:scale-95"><Minus size={32} strokeWidth={3} /></button><div className="text-center"><span className="font-display text-[40px] font-extrabold text-[#3A4B40]">{precio}</span><span className="ml-1 text-[16px] font-bold text-[#8b9c91]">Bs</span></div><button onClick={() => setPrecio(precio + 1)} className="flex h-16 w-16 items-center justify-center rounded-[18px] bg-white text-[#719B5C] shadow-sm active:scale-95"><Plus size={32} strokeWidth={3} /></button></div>
+      <button onClick={() => onSave({ ...item, precio, unidad })} className="flex w-full items-center justify-center gap-2 rounded-[18px] bg-[#3A4B40] py-4 text-[14px] font-bold text-white shadow-lg active:scale-[0.98]">Guardar precio <CheckCircle2 size={18} /></button>
+    </>
   )
 }
 
