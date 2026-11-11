@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { ArrowLeft, ArrowRight, ArrowUpRight, BadgeCheck, Bike, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight, Compass, Flower2, Heart, Home, MapPin, Minus, PackageCheck, Plus, Recycle, ShieldCheck, ShoppingBasket, Smartphone, Sparkles, Star, UserRound, WalletCards, X, Zap, Store, ChevronLeft, ListTodo, Store as StoreIcon, Camera, Trash2, PlusCircle, Image as ImageIcon, Map as MapIcon, Navigation, Banknote, MapPinned } from 'lucide-react'
+import { ArrowLeft, ArrowRight, ArrowUpRight, BadgeCheck, Bike, CalendarDays, Check, CheckCircle2, ChevronDown, ChevronRight, Compass, Flower2, Heart, Home, MapPin, Minus, PackageCheck, Plus, Recycle, ShieldCheck, ShoppingBasket, Smartphone, Sparkles, Star, UserRound, WalletCards, X, Zap, Store, ChevronLeft, ListTodo, Store as StoreIcon, Camera, Trash2, PlusCircle, Image as ImageIcon, Map as MapIcon, Navigation, Banknote, MapPinned, Languages } from 'lucide-react'
 
 // --- TIPOS Y DATOS ORIGINALES ---
 interface Casera { id: string; nombre: string; puesto: string; rating: number; especialidad: string; fotoUrl: string }
@@ -25,10 +25,83 @@ const yapas: Producto[] = [
 ]
 type Tab = 'inicio' | 'canasta' | 'ruta' | 'casera'
 type Modal = 'swap' | 'yapa' | 'pago' | null
-interface StoreContextType { casera: Casera; setCasera: (c: Casera) => void; yapa: Producto | null; setYapa: (p: Producto | null) => void; basket: Canasta; setBasketType: (t: Canasta['tipo']) => void; swap: boolean; setSwap: (v: boolean) => void }
+interface StoreContextType { 
+  casera: Casera; setCasera: (c: Casera) => void; 
+  yapa: Producto | null; setYapa: (p: Producto | null) => void; 
+  basket: Canasta; setBasketType: (t: Canasta['tipo']) => void; 
+  swap: boolean; setSwap: (v: boolean) => void;
+}
 const TampuContext = createContext<StoreContextType | null>(null)
 const useTampu = () => { const value = useContext(TampuContext); if (!value) throw new Error('TampuContext no disponible'); return value }
 const money = (n: number) => `${n} Bs`
+
+// --- DICCIONARIO GENERAL (Español / Quechuañol de Cochabamba) ---
+const dicc = {
+  es: {
+    bienvenido: "Bienvenido",
+    comoUsaras: "¿Cómo usarás\nTAMPU hoy?",
+    quieroComprar: "Quiero comprar",
+    recibeCanastas: "Recibe canastas frescas en tu puerta",
+    soyCasera: "Soy Casera",
+    gestionaVentas: "Gestiona tus ventas y yapas de la semana",
+    soyRepartidor: "Soy Repartidor",
+    llevaFrescura: "Lleva frescura y gana con cada entrega",
+    iniciarCasera: "Acceso Casera",
+    revisaPedidos: "Revisa tus pedidos de hoy",
+    numCelular: "Número de celular",
+    contrasena: "Contraseña",
+    ingresar: "Ingresar",
+    noCuenta: "¿No tienes una cuenta?",
+    crearCuentaCasera: "Crear cuenta de Casera",
+    saludo: "¡Buen día, Doña",
+    pedidosTab: "Pedidos",
+    puestoTab: "Mi Puesto",
+    pedidosTitulo: "Pedidos para hoy",
+    canastasArmar: "Canastas a preparar",
+    pendientes: "pendientes",
+    verLista: "Ver lista de verduras a preparar",
+    tusVerduras: "Tus verduras de hoy",
+    marcaLoQueTienes: "Marca lo que tienes para vender.",
+    editarLista: "Editar Lista",
+    noTienesHoy: "No tienes hoy",
+    siHay: "SÍ HAY",
+    seAcabo: "SE ACABÓ",
+    cambiarPrecio: "Cambiar precio",
+    el: "el"
+  },
+  qu: {
+    bienvenido: "Allin jamuska",
+    comoUsaras: "¿Imayna TAMPUta\nllamk'achinki?",
+    quieroComprar: "Rantiyta munani",
+    recibeCanastas: "Q'umir canastata wasiykipi jap'iy",
+    soyCasera: "Caserita kani",
+    gestionaVentas: "Ventasniykita, yapasniykita ima qhaway",
+    soyRepartidor: "Apaykachaq kani",
+    llevaFrescura: "Frescura apay, sapa entregapi ganay",
+    iniciarCasera: "Yaykuy Caserita",
+    revisaPedidos: "Kunan encargosniykita qhaway",
+    numCelular: "Celular yupayniyki",
+    contrasena: "Contraseña",
+    ingresar: "Yaykuy",
+    noCuenta: "¿Manachu cuentayki tiyan?",
+    crearCuentaCasera: "Caserapaq cuentata ruway",
+    saludo: "¡Allin p'unchay, Doña",
+    pedidosTab: "Encargosniy", 
+    puestoTab: "Puestoy", 
+    pedidosTitulo: "Kunanpaq encargos",
+    canastasArmar: "Canastas wakichinapaq",
+    pendientes: "faltanraq",
+    verLista: "Q'umir listata qhaway",
+    tusVerduras: "Kunan p'unchaw q'umirniyki",
+    marcaLoQueTienes: "Imatachus vendinayki tiyan chayta marcay.",
+    editarLista: "Listata allinchay",
+    noTienesHoy: "Mana kanchu",
+    siHay: "TIYANMI",
+    seAcabo: "TUKUKAPUN",
+    cambiarPrecio: "Preciota cambianapaq",
+    el: "" 
+  }
+}
 
 // --- CONTROLADOR PRINCIPAL DE VISTAS ---
 type AppView = 'roles' | 'login' | 'signup' | 'dashboard'
@@ -37,26 +110,24 @@ type Role = 'cliente' | 'casera' | 'delivery'
 export default function App() {
   const [appView, setAppView] = useState<AppView>('roles')
   const [role, setRole] = useState<Role>('cliente')
+  const [lang, setLang] = useState<'es' | 'qu'>('es')
+
+  const t = dicc[lang];
 
   if (appView === 'roles') {
-    return <RoleSelectionScreen onSelect={(r) => { setRole(r); setAppView('login') }} />
+    return <RoleSelectionScreen lang={lang} setLang={setLang} t={t} onSelect={(r) => { setRole(r); setAppView('login') }} />
   }
   if (appView === 'login') {
-    return <LoginScreen role={role} onBack={() => setAppView('roles')} onLogin={() => setAppView('dashboard')} onGoToSignUp={() => setAppView('signup')} />
+    return <LoginScreen role={role} lang={lang} setLang={setLang} t={t} onBack={() => setAppView('roles')} onLogin={() => setAppView('dashboard')} onGoToSignUp={() => setAppView('signup')} />
   }
   if (appView === 'signup') {
-    return <SignUpScreen role={role} onBack={() => setAppView('login')} onSignUp={() => setAppView('dashboard')} />
+    return <SignUpScreen role={role} lang={lang} setLang={setLang} onBack={() => setAppView('login')} onSignUp={() => setAppView('dashboard')} />
   }
-  if (role === 'cliente') {
-    return <CustomerDashboard onLogout={() => setAppView('roles')} />
-  }
-  if (role === 'casera') {
-    return <CaseraDashboard onLogout={() => setAppView('roles')} />
-  }
-  if (role === 'delivery') {
-    return <DeliveryDashboard onLogout={() => setAppView('roles')} />
-  }
-
+  
+  if (role === 'cliente') { return <CustomerDashboard onLogout={() => setAppView('roles')} /> }
+  if (role === 'casera') { return <CaseraDashboard lang={lang} setLang={setLang} t={t} onLogout={() => setAppView('roles')} /> }
+  if (role === 'delivery') { return <DeliveryDashboard onLogout={() => setAppView('roles')} /> }
+  
   return null
 }
 
@@ -67,16 +138,26 @@ const roleConfigs = {
   delivery: { title: 'Acceso Repartidor', subtitle: 'Conéctate para empezar tu ruta', color: 'bg-[#4A8BBA]', button: 'bg-[#4A8BBA]', text: 'text-[#4A8BBA]', focus: 'focus:border-[#4A8BBA] focus:ring-[#4A8BBA]/15' },
 }
 
-function RoleSelectionScreen({ onSelect }: { onSelect: (r: Role) => void }) {
+function LangToggle({ lang, setLang, isDark = false }: { lang: 'es'|'qu', setLang: (l:'es'|'qu')=>void, isDark?: boolean }) {
+  return (
+    <button onClick={() => setLang(lang === 'es' ? 'qu' : 'es')} className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 backdrop-blur-md transition-all active:scale-95 ${isDark ? 'bg-white/20 text-white' : 'bg-[#f0f3eb] text-[#3A4B40]'}`}>
+      <Languages size={14} className="shrink-0"/>
+      <span className="text-[10px] font-bold uppercase tracking-wider">{lang === 'es' ? 'Quechua' : 'Español'}</span>
+    </button>
+  )
+}
+
+function RoleSelectionScreen({ onSelect, lang, setLang, t }: { onSelect: (r: Role) => void, lang: 'es'|'qu', setLang: (l:'es'|'qu')=>void, t: any }) {
   const roles = [
-    { id: 'cliente', title: 'Quiero comprar', desc: 'Recibe canastas frescas en tu puerta', icon: <ShoppingBasket size={24} />, bg: 'bg-[#f1f6ea]', color: 'text-[#719B5C]', border: 'border-[#d4e5c8]' },
-    { id: 'casera', title: 'Soy Casera', desc: 'Gestiona tus ventas y yapas de la semana', icon: <Store size={24} />, bg: 'bg-[#fff0e8]', color: 'text-[#F3793B]', border: 'border-[#f6d6c4]' },
-    { id: 'delivery', title: 'Soy Repartidor', desc: 'Lleva frescura y gana con cada entrega', icon: <Bike size={24} />, bg: 'bg-[#e5f0f9]', color: 'text-[#4A8BBA]', border: 'border-[#c1daf1]' },
+    { id: 'cliente', title: t.quieroComprar, desc: t.recibeCanastas, icon: <ShoppingBasket size={24} />, bg: 'bg-[#f1f6ea]', color: 'text-[#719B5C]', border: 'border-[#d4e5c8]' },
+    { id: 'casera', title: t.soyCasera, desc: t.gestionaVentas, icon: <Store size={24} />, bg: 'bg-[#fff0e8]', color: 'text-[#F3793B]', border: 'border-[#f6d6c4]' },
+    { id: 'delivery', title: t.soyRepartidor, desc: t.llevaFrescura, icon: <Bike size={24} />, bg: 'bg-[#e5f0f9]', color: 'text-[#4A8BBA]', border: 'border-[#c1daf1]' },
   ] as const
   return (
-    <main className="flex h-[100dvh] w-full flex-col bg-white px-6 pb-8 pt-12">
+    <main className="flex h-[100dvh] w-full flex-col bg-white px-6 pb-8 pt-8">
+      <div className="mb-6 flex justify-end"><LangToggle lang={lang} setLang={setLang} /></div>
       <div className="flex justify-center pb-8 pt-4"><img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[70px] w-auto object-contain" /></div>
-      <div className="mb-8 text-center"><p className="text-[10px] font-bold uppercase tracking-[.19em] text-[#719B5C]">Bienvenido</p><h1 className="mt-1 font-display text-[28px] font-extrabold leading-tight tracking-tight text-[#3A4B40]">¿Cómo usarás<br/>TAMPU hoy?</h1></div>
+      <div className="mb-8 text-center"><p className="text-[10px] font-bold uppercase tracking-[.19em] text-[#719B5C]">{t.bienvenido}</p><h1 className="mt-1 whitespace-pre-line font-display text-[28px] font-extrabold leading-tight tracking-tight text-[#3A4B40]">{t.comoUsaras}</h1></div>
       <div className="flex flex-col gap-4">
         {roles.map((r) => (
           <button key={r.id} onClick={() => onSelect(r.id)} className={`flex items-center gap-4 rounded-[22px] border ${r.border} bg-white p-4 text-left shadow-sm transition-all duration-300 hover:shadow-md`}><div className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-[18px] ${r.bg} ${r.color}`}>{r.icon}</div><div className="flex-1"><h2 className="font-display text-[15px] font-extrabold text-[#3A4B40]">{r.title}</h2><p className="mt-0.5 text-[10px] leading-relaxed text-[#7c8b82]">{r.desc}</p></div><ChevronRight size={18} className="text-[#c3ccc6]" /></button>
@@ -86,32 +167,33 @@ function RoleSelectionScreen({ onSelect }: { onSelect: (r: Role) => void }) {
   )
 }
 
-function LoginScreen({ role, onBack, onLogin, onGoToSignUp }: { role: Role; onBack: () => void; onLogin: () => void; onGoToSignUp: () => void }) {
+function LoginScreen({ role, onBack, onLogin, onGoToSignUp, lang, setLang, t }: { role: Role; onBack: () => void; onLogin: () => void; onGoToSignUp: () => void, lang: 'es'|'qu', setLang: (l:'es'|'qu')=>void, t: any }) {
   const config = roleConfigs[role]
+  const isCasera = role === 'casera'
   return (
     <main className="flex h-[100dvh] w-full flex-col bg-white">
-      <header className="flex items-center px-4 py-5"><button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f7f2] text-[#55695d] transition-colors hover:bg-[#e6ebe3]"><ChevronLeft size={20} /></button></header>
+      <header className="flex items-center justify-between px-4 py-5"><button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f7f2] text-[#55695d] transition-colors hover:bg-[#e6ebe3]"><ChevronLeft size={20} /></button><LangToggle lang={lang} setLang={setLang} /></header>
       <div className="flex-1 px-6 pt-4">
         <div className={`mb-6 inline-flex h-2 w-12 rounded-full ${config.color}`} />
-        <h1 className="font-display text-[32px] font-extrabold leading-tight tracking-tight text-[#3A4B40]">{config.title}</h1>
-        <p className="mt-2 text-[12px] text-[#7a8a80]">{config.subtitle}</p>
+        <h1 className="font-display text-[32px] font-extrabold leading-tight tracking-tight text-[#3A4B40]">{isCasera ? t.iniciarCasera : config.title}</h1>
+        <p className="mt-2 text-[12px] text-[#7a8a80]">{isCasera ? t.revisaPedidos : config.subtitle}</p>
         <form className="mt-10 flex flex-col gap-5" onSubmit={(e) => { e.preventDefault(); onLogin(); }}>
-          <div><label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#69796e]">Número de celular</label><input type="tel" placeholder="Ej. 70012345" className={`w-full rounded-[16px] border border-[#e1e6de] bg-[#fbfdfa] px-4 py-3.5 text-[14px] font-medium text-[#3A4B40] outline-none transition-all focus:bg-white focus:ring-4 ${config.focus}`} required /></div>
-          <div><label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#69796e]">Contraseña</label><input type="password" placeholder="••••••••" className={`w-full rounded-[16px] border border-[#e1e6de] bg-[#fbfdfa] px-4 py-3.5 text-[14px] font-medium text-[#3A4B40] outline-none transition-all focus:bg-white focus:ring-4 ${config.focus}`} required /></div>
-          <button type="submit" className={`mt-4 flex w-full items-center justify-center gap-2 rounded-[16px] ${config.button} py-4 text-[12px] font-bold text-white shadow-lg transition-transform active:scale-[0.98]`}>Ingresar <ArrowRight size={15} /></button>
+          <div><label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#69796e]">{isCasera ? t.numCelular : 'Número de celular'}</label><input type="tel" placeholder="Ej. 70012345" className={`w-full rounded-[16px] border border-[#e1e6de] bg-[#fbfdfa] px-4 py-3.5 text-[14px] font-medium text-[#3A4B40] outline-none transition-all focus:bg-white focus:ring-4 ${config.focus}`} required /></div>
+          <div><label className="mb-1.5 block text-[10px] font-bold uppercase tracking-wider text-[#69796e]">{isCasera ? t.contrasena : 'Contraseña'}</label><input type="password" placeholder="••••••••" className={`w-full rounded-[16px] border border-[#e1e6de] bg-[#fbfdfa] px-4 py-3.5 text-[14px] font-medium text-[#3A4B40] outline-none transition-all focus:bg-white focus:ring-4 ${config.focus}`} required /></div>
+          <button type="submit" className={`mt-4 flex w-full items-center justify-center gap-2 rounded-[16px] ${config.button} py-4 text-[12px] font-bold text-white shadow-lg transition-transform active:scale-[0.98]`}>{isCasera ? t.ingresar : 'Ingresar'} <ArrowRight size={15} /></button>
         </form>
-        <div className="mt-8 flex flex-col items-center justify-center border-t border-[#f0f3eb] pt-6"><p className="text-[11px] text-[#7a8a80]">¿No tienes una cuenta?</p><button onClick={onGoToSignUp} className={`mt-1.5 text-[12px] font-bold ${config.text} hover:underline`}>Crear cuenta de {role}</button></div>
+        <div className="mt-8 flex flex-col items-center justify-center border-t border-[#f0f3eb] pt-6"><p className="text-[11px] text-[#7a8a80]">{isCasera ? t.noCuenta : '¿No tienes una cuenta?'}</p><button onClick={onGoToSignUp} className={`mt-1.5 text-[12px] font-bold ${config.text} hover:underline`}>{isCasera ? t.crearCuentaCasera : `Crear cuenta de ${role}`}</button></div>
       </div>
     </main>
   )
 }
 
-function SignUpScreen({ role, onBack, onSignUp }: { role: Role; onBack: () => void; onSignUp: () => void }) {
+function SignUpScreen({ role, onBack, onSignUp, lang, setLang }: { role: Role; onBack: () => void; onSignUp: () => void, lang: 'es'|'qu', setLang: (l:'es'|'qu')=>void }) {
   const config = roleConfigs[role]
   const inputClasses = `w-full rounded-[16px] border border-[#e1e6de] bg-[#fbfdfa] px-4 py-3.5 text-[14px] font-medium text-[#3A4B40] outline-none transition-all focus:bg-white focus:ring-4 ${config.focus}`
   return (
     <main className="flex min-h-[100dvh] w-full flex-col bg-white">
-      <header className="flex items-center px-4 py-5"><button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f7f2] text-[#55695d] transition-colors hover:bg-[#e6ebe3]"><ChevronLeft size={20} /></button></header>
+      <header className="flex items-center justify-between px-4 py-5"><button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#f4f7f2] text-[#55695d] transition-colors hover:bg-[#e6ebe3]"><ChevronLeft size={20} /></button><LangToggle lang={lang} setLang={setLang} /></header>
       <div className="flex-1 px-6 pb-8 pt-2">
         <div className={`mb-6 inline-flex h-2 w-12 rounded-full ${config.color}`} />
         <h1 className="font-display text-[32px] font-extrabold leading-tight tracking-tight text-[#3A4B40]">Crear cuenta</h1>
@@ -126,244 +208,6 @@ function SignUpScreen({ role, onBack, onSignUp }: { role: Role; onBack: () => vo
           <button type="submit" className={`mt-4 flex w-full items-center justify-center gap-2 rounded-[16px] ${config.button} py-4 text-[12px] font-bold text-white shadow-lg transition-transform active:scale-[0.98]`}>Completar registro <CheckCircle2 size={15} /></button>
         </form>
         <div className="mt-8 flex flex-col items-center justify-center border-t border-[#f0f3eb] pt-6"><p className="text-[11px] text-[#7a8a80]">¿Ya tienes una cuenta?</p><button onClick={onBack} className={`mt-1.5 text-[12px] font-bold ${config.text} hover:underline`}>Inicia sesión aquí</button></div>
-      </div>
-    </main>
-  )
-}
-
-// --- APP DEL DELIVERY ---
-interface Entrega {
-  id: string;
-  cliente: string;
-  direccion: string;
-  referencia: string;
-  caseraInfo: string; 
-  estado: 'recojo' | 'transito' | 'entregado';
-  montoGanancia: number;
-}
-
-const entregasIniciales: Entrega[] = [
-  { id: 'E01', cliente: 'María López', direccion: 'Av. América esq. Potosí', referencia: 'Edificio Los Pinos, depto 4B. Tocar timbre.', caseraInfo: 'Doña Rosa · Puesto 42, La Cancha', estado: 'recojo', montoGanancia: 15 },
-  { id: 'E02', cliente: 'Familia Vargas', direccion: 'Av. Juan de la Rosa', referencia: 'Casa amarilla portón negro.', caseraInfo: 'Doña Carmen · Puesto 18, La Cancha', estado: 'transito', montoGanancia: 15 },
-]
-
-type DeliverySubView = 'none' | 'mapa' | 'foto-entrega'
-
-function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
-  const [activeTab, setActiveTab] = useState<'rutas' | 'ganancias'>('rutas')
-  const [entregas, setEntregas] = useState<Entrega[]>(entregasIniciales)
-  
-  const [subView, setSubView] = useState<DeliverySubView>('none')
-  const [entregaActiva, setEntregaActiva] = useState<Entrega | null>(null)
-
-  if (subView === 'mapa' && entregaActiva) {
-    return <DeliveryMapaScreen entrega={entregaActiva} onBack={() => setSubView('none')} onArrived={() => setSubView('foto-entrega')} />
-  }
-  if (subView === 'foto-entrega' && entregaActiva) {
-    return (
-      <DeliveryFotoEntrega 
-        entrega={entregaActiva} 
-        onBack={() => setSubView('mapa')} 
-        onConfirm={() => {
-          setEntregas(prev => prev.map(e => e.id === entregaActiva.id ? { ...e, estado: 'entregado' } : e));
-          setSubView('none');
-          setEntregaActiva(null);
-        }} 
-      />
-    )
-  }
-
-  const entregasActivas = entregas.filter(e => e.estado !== 'entregado');
-  const entregasCompletadas = entregas.filter(e => e.estado === 'entregado');
-  const gananciasHoy = entregasCompletadas.reduce((sum, e) => sum + e.montoGanancia, 0);
-
-  const actualizarEstado = (id: string, nuevoEstado: Entrega['estado']) => {
-    setEntregas(prev => prev.map(e => e.id === id ? { ...e, estado: nuevoEstado } : e))
-  }
-
-  return (
-    <main className="relative h-[100dvh] w-full overflow-hidden bg-[#f4f7f9] text-[#2c3e50]">
-      <div className="scrollbar-hide absolute inset-0 overflow-y-auto pb-[90px]">
-        <div className="bg-[#4A8BBA] px-6 pb-6 pt-6 text-white rounded-b-[30px] shadow-sm">
-          <div className="mb-4 flex items-center justify-between">
-            <div className="rounded-[10px] bg-white px-2 py-1 shadow-sm">
-              <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[22px] w-auto object-contain" />
-            </div>
-            <button onClick={onLogout} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md transition-all active:scale-95">
-              <UserRound size={18} className="text-white" />
-            </button>
-          </div>
-          <div>
-            <div className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#a8d3f0]">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#6fe092]" /> En línea
-            </div>
-            <h1 className="font-display text-[26px] font-extrabold tracking-tight">Ruta activa, Carlos</h1>
-          </div>
-        </div>
-
-        {activeTab === 'rutas' && (
-          <div className="px-5 pt-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="font-display text-[18px] font-extrabold text-[#2c3e50]">Tareas de hoy</h2>
-              <span className="rounded-full bg-[#e3f0f7] px-2.5 py-1 text-[10px] font-bold text-[#4A8BBA]">{entregasActivas.length} pendientes</span>
-            </div>
-
-            <div className="flex flex-col gap-4">
-              {entregasActivas.length === 0 ? (
-                <div className="flex flex-col items-center justify-center rounded-[22px] border border-[#e1e9ee] bg-white py-10 text-center shadow-sm">
-                  <CheckCircle2 size={40} className="mb-3 text-[#719B5C]" />
-                  <p className="font-display text-[16px] font-extrabold text-[#2c3e50]">¡Todo entregado!</p>
-                  <p className="text-[12px] text-[#718596]">No hay más rutas por ahora.</p>
-                </div>
-              ) : (
-                entregasActivas.map(entrega => (
-                  <div key={entrega.id} className="rounded-[22px] border border-[#e1e9ee] bg-white p-5 shadow-sm">
-                    {entrega.estado === 'recojo' ? (
-                      <>
-                        <div className="mb-3 flex items-center justify-between border-b border-[#f0f4f7] pb-3">
-                          <div className="flex items-center gap-2 rounded-full bg-[#fff0e8] px-2.5 py-1 text-[10px] font-bold text-[#F3793B]"><StoreIcon size={12}/> Recoger pedido</div>
-                          <span className="text-[12px] font-extrabold text-[#4A8BBA]">+{entrega.montoGanancia} Bs</span>
-                        </div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-[#718596]">Ir a:</p>
-                        <p className="font-display text-[18px] font-extrabold text-[#2c3e50]">{entrega.caseraInfo}</p>
-                        <p className="mt-1 text-[12px] text-[#718596]">Canasta para: <span className="font-bold text-[#2c3e50]">{entrega.cliente}</span></p>
-                        
-                        <button onClick={() => actualizarEstado(entrega.id, 'transito')} className="mt-5 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#F3793B] py-3.5 text-[13px] font-bold text-white shadow-sm active:scale-95">
-                          <PackageCheck size={18}/> Ya recogí la canasta
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="mb-3 flex items-center justify-between border-b border-[#f0f4f7] pb-3">
-                          <div className="flex items-center gap-2 rounded-full bg-[#e3f0f7] px-2.5 py-1 text-[10px] font-bold text-[#4A8BBA]"><Navigation size={12}/> En camino</div>
-                          <span className="text-[12px] font-extrabold text-[#4A8BBA]">+{entrega.montoGanancia} Bs</span>
-                        </div>
-                        <p className="text-[11px] font-bold uppercase tracking-wider text-[#718596]">Entregar a:</p>
-                        <p className="font-display text-[18px] font-extrabold text-[#2c3e50]">{entrega.cliente}</p>
-                        <div className="mt-2 flex items-start gap-2 rounded-[12px] bg-[#f4f7f9] p-3 text-[12px]">
-                          <MapPin size={16} className="mt-0.5 shrink-0 text-[#4A8BBA]"/>
-                          <div>
-                            <p className="font-bold text-[#2c3e50]">{entrega.direccion}</p>
-                            <p className="mt-0.5 text-[#718596]">{entrega.referencia}</p>
-                          </div>
-                        </div>
-                        <button onClick={() => { setEntregaActiva(entrega); setSubView('mapa'); }} className="mt-5 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#4A8BBA] py-3.5 text-[13px] font-bold text-white shadow-sm active:scale-95">
-                          <MapPinned size={18}/> Ver mapa y entregar
-                        </button>
-                      </>
-                    )}
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'ganancias' && (
-          <div className="px-5 pt-6">
-            <h2 className="mb-4 font-display text-[18px] font-extrabold text-[#2c3e50]">Resumen de hoy</h2>
-            <div className="flex items-center justify-between rounded-[24px] bg-[#4A8BBA] p-6 text-white shadow-md">
-              <div>
-                <p className="text-[12px] font-medium text-white/80">Ganancias generadas</p>
-                <p className="mt-1 font-display text-[36px] font-extrabold leading-none">{gananciasHoy} <span className="text-[18px] font-bold">Bs</span></p>
-              </div>
-              <div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20"><Banknote size={28}/></div>
-            </div>
-
-            <h3 className="mb-3 mt-8 font-display text-[15px] font-extrabold text-[#2c3e50]">Entregas completadas ({entregasCompletadas.length})</h3>
-            <div className="flex flex-col gap-3">
-              {entregasCompletadas.length === 0 ? (
-                <p className="text-[12px] text-[#718596]">Aún no has completado entregas hoy.</p>
-              ) : (
-                entregasCompletadas.map(entrega => (
-                  <div key={entrega.id} className="flex items-center justify-between rounded-[16px] border border-[#e1e9ee] bg-white p-4">
-                    <div className="flex items-center gap-3">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f5ec] text-[#719B5C]"><Check size={18}/></div>
-                      <div><p className="font-bold text-[#2c3e50]">{entrega.cliente}</p><p className="text-[10px] text-[#718596]">{entrega.direccion}</p></div>
-                    </div>
-                    <span className="font-display text-[14px] font-extrabold text-[#4A8BBA]">+{entrega.montoGanancia} Bs</span>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <nav className="absolute inset-x-0 bottom-0 z-20 flex h-[80px] items-center justify-around border-t border-[#e1e9ee] bg-[#ffffff] px-2 pb-4 pt-2 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
-        <button onClick={() => setActiveTab('rutas')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'rutas' ? 'text-[#4A8BBA]' : 'text-[#8da3b5]'}`}><MapIcon size={24} className={activeTab === 'rutas' ? 'fill-[#e3f0f7]' : ''} /><span className={`text-[10px] ${activeTab === 'rutas' ? 'font-extrabold' : 'font-medium'}`}>Rutas</span></button>
-        <button onClick={() => setActiveTab('ganancias')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'ganancias' ? 'text-[#4A8BBA]' : 'text-[#8da3b5]'}`}><WalletCards size={24} className={activeTab === 'ganancias' ? 'fill-[#e3f0f7]' : ''} /><span className={`text-[10px] ${activeTab === 'ganancias' ? 'font-extrabold' : 'font-medium'}`}>Ganancias</span></button>
-      </nav>
-    </main>
-  )
-}
-
-function DeliveryMapaScreen({ entrega, onBack, onArrived }: { entrega: Entrega, onBack: () => void, onArrived: () => void }) {
-  return (
-    <main className="flex h-[100dvh] w-full flex-col bg-[#f4f7f9]">
-      <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/90 px-5 py-4 backdrop-blur-md shadow-sm">
-        <button onClick={onBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f0f4f7] text-[#4A8BBA] active:scale-95"><ChevronLeft size={20}/></button>
-        <div className="text-center"><p className="text-[10px] font-bold uppercase tracking-wider text-[#718596]">Navegando hacia</p><h1 className="font-display text-[16px] font-extrabold text-[#2c3e50]">{entrega.cliente}</h1></div>
-        <div className="w-10" />
-      </header>
-      
-      <div className="relative flex-1 bg-[#e9efdf] pt-20">
-        <svg viewBox="0 0 360 400" className="absolute inset-0 h-full w-full object-cover" preserveAspectRatio="xMidYMid slice">
-          <rect width="360" height="600" fill="#e8eddf"/>
-          <path d="M-20 42L380 192M-10 218L340-18M25-10L118 400M296-20L228 400M-20 121L380 68" stroke="#fcfdf8" strokeWidth="16"/>
-          <path d="M-20 42L380 192M-10 218L340-18M25-10L118 400M296-20L228 400M-20 121L380 68" stroke="#d4dfcb" strokeWidth="1.4" strokeDasharray="5 4"/>
-          <path d="M125 190 L180 120 L240 85" fill="none" stroke="#4A8BBA" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/>
-          <text x="186" y="196" fill="#74846d" fontSize="9" fontFamily="DM Sans" fontWeight="600" transform="rotate(20 186 196)">Ruta sugerida</text>
-        </svg>
-        <div className="absolute left-[30%] top-[45%] flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-[#4A8BBA] text-white shadow-lg"><Bike size={18} fill="currentColor"/></div>
-        <div className="absolute left-[62%] top-[18%] flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-[#719B5C] text-white shadow-lg"><MapPin size={14} fill="currentColor"/></div>
-      </div>
-
-      <div className="rounded-t-[30px] bg-white px-6 pb-8 pt-6 shadow-[0_-20px_40px_rgba(0,0,0,0.08)] z-20">
-        <div className="mb-4 flex items-start gap-3">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f0f4f7] text-[#4A8BBA]"><MapPin size={24}/></div>
-          <div><p className="font-display text-[16px] font-extrabold text-[#2c3e50]">{entrega.direccion}</p><p className="mt-0.5 text-[12px] text-[#718596]">{entrega.referencia}</p></div>
-        </div>
-        <button onClick={onArrived} className="flex w-full items-center justify-center gap-2 rounded-[16px] bg-[#4A8BBA] py-4 text-[14px] font-bold text-white shadow-lg active:scale-[0.98]">
-          Ya llegué, entregar pedido <CheckCircle2 size={18}/>
-        </button>
-      </div>
-    </main>
-  )
-}
-
-function DeliveryFotoEntrega({ entrega, onBack, onConfirm }: { entrega: Entrega, onBack: () => void, onConfirm: () => void }) {
-  const [tomandoFoto, setTomandoFoto] = useState(false);
-  const handleConfirm = () => { setTomandoFoto(true); setTimeout(() => onConfirm(), 1200); }
-  
-  return (
-    <main className="flex h-[100dvh] w-full flex-col bg-[#1a232b] text-white">
-      <header className="flex items-center justify-between px-5 py-5">
-        <button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 active:scale-95"><ArrowLeft size={20}/></button>
-        <p className="text-[12px] font-bold tracking-wider text-white/70">EVIDENCIA DE ENTREGA</p>
-        <div className="w-10" />
-      </header>
-      
-      <div className="flex flex-col items-center px-6 pt-4 text-center">
-        <h2 className="font-display text-[22px] font-extrabold">Canasta en destino</h2>
-        <p className="mt-2 text-[12px] text-white/70">Toma una foto de la canasta en la puerta o en manos de {entrega.cliente}.</p>
-      </div>
-
-      <div className="mx-6 mt-8 flex flex-1 flex-col items-center justify-center rounded-[32px] border-4 border-dashed border-white/20 bg-white/5">
-        {tomandoFoto ? (
-          <div className="flex flex-col items-center gap-3">
-            <div className="h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-[#4A8BBA]" />
-            <p className="text-[12px] font-bold text-white/80">Confirmando entrega...</p>
-          </div>
-        ) : (
-          <><Camera size={64} className="mb-4 text-white/30" /><p className="text-[14px] font-bold text-white/50">Toca para abrir cámara</p></>
-        )}
-      </div>
-
-      <div className="p-6 pb-10">
-        <button disabled={tomandoFoto} onClick={handleConfirm} className="flex w-full items-center justify-center gap-2 rounded-[20px] bg-[#4A8BBA] py-5 text-[14px] font-bold text-white shadow-lg active:scale-[0.98] disabled:opacity-70">
-          <CheckCircle2 size={20}/> {tomandoFoto ? 'Finalizando...' : 'Simular foto y finalizar'}
-        </button>
       </div>
     </main>
   )
@@ -388,7 +232,7 @@ const pedidosIniciales: PedidoCliente[] = [
 
 type CaseraSubView = 'none' | 'lista-pedidos' | 'foto-canasta' | 'editar-inventario'
 
-function CaseraDashboard({ onLogout }: { onLogout: () => void }) {
+function CaseraDashboard({ onLogout, lang, setLang, t }: { onLogout: () => void, lang: 'es'|'qu', setLang: (l:'es'|'qu')=>void, t: any }) {
   const [activeTab, setActiveTab] = useState<'pedidos' | 'puesto'>('pedidos')
   const [inventario, setInventario] = useState<ItemVenta[]>(inventarioInicial)
   const [pedidos, setPedidos] = useState<PedidoCliente[]>(pedidosIniciales)
@@ -430,29 +274,32 @@ function CaseraDashboard({ onLogout }: { onLogout: () => void }) {
             <div className="rounded-[10px] bg-white px-2 py-1 shadow-sm">
               <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[22px] w-auto object-contain" />
             </div>
-            <button onClick={onLogout} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md transition-all active:scale-95">
-              <UserRound size={18} className="text-white" />
-            </button>
+            <div className="flex items-center gap-3">
+              <LangToggle lang={lang} setLang={setLang} isDark />
+              <button onClick={onLogout} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md transition-all active:scale-95">
+                <UserRound size={18} className="text-white" />
+              </button>
+            </div>
           </div>
           <div>
             <p className="text-[11px] font-medium text-white/80">Puesto 42, La Cancha</p>
-            <h1 className="font-display text-[26px] font-extrabold tracking-tight">¡Buen día, Doña Rosa!</h1>
+            <h1 className="font-display text-[26px] font-extrabold tracking-tight">{t.saludo} Rosa!</h1>
           </div>
         </div>
 
         {activeTab === 'pedidos' && (
           <div className="px-5 pt-6">
-            <h2 className="mb-4 font-display text-[18px] font-extrabold text-[#3A4B40]">Pedidos para hoy</h2>
+            <h2 className="mb-4 font-display text-[18px] font-extrabold text-[#3A4B40]">{t.pedidosTitulo}</h2>
             <div className="flex flex-col gap-4">
               <div className="rounded-[22px] border border-[#e8ede6] bg-white p-5 shadow-sm">
                 <div className="flex items-center gap-3">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#eef7e9] text-[#719B5C]"><ShoppingBasket size={24}/></div>
-                  <div><p className="text-[12px] text-[#6e8074]">Canastas a preparar</p><p className="font-display text-[22px] font-extrabold text-[#3A4B40]">{pendientesCount} <span className="text-[12px] font-medium text-[#F3793B]">pendientes</span></p></div>
+                  <div><p className="text-[12px] text-[#6e8074]">{t.canastasArmar}</p><p className="font-display text-[22px] font-extrabold text-[#3A4B40]">{pendientesCount} <span className="text-[12px] font-medium text-[#F3793B]">{t.pendientes}</span></p></div>
                 </div>
               </div>
             </div>
             <button onClick={() => setSubView('lista-pedidos')} className="mt-6 flex w-full items-center justify-center gap-2 rounded-[16px] bg-[#3A4B40] py-4 text-[13px] font-bold text-white shadow-lg transition-transform active:scale-[0.98]">
-              Ver lista de verduras a preparar <ArrowRight size={18} />
+              {t.verLista} <ArrowRight size={18} />
             </button>
           </div>
         )}
@@ -461,11 +308,11 @@ function CaseraDashboard({ onLogout }: { onLogout: () => void }) {
           <div className="px-5 pt-6">
             <div className="mb-5 flex items-center justify-between">
               <div>
-                <h2 className="font-display text-[18px] font-extrabold text-[#3A4B40]">Tus verduras de hoy</h2>
-                <p className="text-[11px] text-[#7c8b82]">Marca lo que tienes para vender.</p>
+                <h2 className="font-display text-[18px] font-extrabold text-[#3A4B40]">{t.tusVerduras}</h2>
+                <p className="text-[11px] text-[#7c8b82]">{t.marcaLoQueTienes}</p>
               </div>
               <button onClick={() => setSubView('editar-inventario')} className="flex items-center gap-1 rounded-full bg-[#f4e8e1] px-3 py-1.5 text-[10px] font-bold text-[#F3793B] active:scale-95">
-                Editar Lista <Plus size={12}/>
+                {t.editarLista} <Plus size={12}/>
               </button>
             </div>
             
@@ -477,18 +324,18 @@ function CaseraDashboard({ onLogout }: { onLogout: () => void }) {
                     <div>
                       <p className={`font-display text-[14px] font-extrabold ${item.disponible ? 'text-[#3A4B40]' : 'text-[#8b9c91]'}`}>{item.nombre}</p>
                       {item.disponible ? (
-                        <p className="text-[11px] font-bold text-[#F3793B]">{item.precio} Bs <span className="font-normal text-[#8b9c91]">el {item.unidad.toLowerCase()}</span></p>
+                        <p className="text-[11px] font-bold text-[#F3793B]">{item.precio} Bs <span className="font-normal text-[#8b9c91]">{t.el} {item.unidad.toLowerCase()}</span></p>
                       ) : (
-                        <p className="text-[11px] font-medium text-[#a3b1a8]">No tienes hoy</p>
+                        <p className="text-[11px] font-medium text-[#a3b1a8]">{t.noTienesHoy}</p>
                       )}
                     </div>
                   </div>
                   
                   <div className="flex flex-col items-end gap-2">
                     <button onClick={() => toggleDisponible(item.id)} className={`flex h-8 items-center justify-center rounded-full px-4 text-[10px] font-bold transition-all ${item.disponible ? 'bg-[#e9f5ed] text-[#34764c]' : 'bg-[#e4e9e1] text-[#69796e]'}`}>
-                      {item.disponible ? 'SÍ HAY' : 'SE ACABÓ'}
+                      {item.disponible ? t.siHay : t.seAcabo}
                     </button>
-                    {item.disponible && <button onClick={() => setEditingItem(item)} className="text-[11px] font-bold text-[#719B5C] underline-offset-2 hover:underline">Cambiar precio</button>}
+                    {item.disponible && <button onClick={() => setEditingItem(item)} className="text-[11px] font-bold text-[#719B5C] underline-offset-2 hover:underline">{t.cambiarPrecio}</button>}
                   </div>
                 </div>
               ))}
@@ -498,11 +345,11 @@ function CaseraDashboard({ onLogout }: { onLogout: () => void }) {
       </div>
 
       <nav className="absolute inset-x-0 bottom-0 z-20 flex h-[80px] items-center justify-around border-t border-[#e9ede5] bg-[#fffefa] px-2 pb-4 pt-2 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]">
-        <button onClick={() => setActiveTab('pedidos')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'pedidos' ? 'text-[#F3793B]' : 'text-[#a1b0a6]'}`}><ListTodo size={24} className={activeTab === 'pedidos' ? 'fill-[#fff0e8]' : ''} /><span className={`text-[10px] ${activeTab === 'pedidos' ? 'font-extrabold' : 'font-medium'}`}>Pedidos</span></button>
-        <button onClick={() => setActiveTab('puesto')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'puesto' ? 'text-[#F3793B]' : 'text-[#a1b0a6]'}`}><StoreIcon size={24} className={activeTab === 'puesto' ? 'fill-[#fff0e8]' : ''} /><span className={`text-[10px] ${activeTab === 'puesto' ? 'font-extrabold' : 'font-medium'}`}>Mi Puesto</span></button>
+        <button onClick={() => setActiveTab('pedidos')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'pedidos' ? 'text-[#F3793B]' : 'text-[#a1b0a6]'}`}><ListTodo size={24} className={activeTab === 'pedidos' ? 'fill-[#fff0e8]' : ''} /><span className={`text-[10px] ${activeTab === 'pedidos' ? 'font-extrabold' : 'font-medium'}`}>{t.pedidosTab}</span></button>
+        <button onClick={() => setActiveTab('puesto')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'puesto' ? 'text-[#F3793B]' : 'text-[#a1b0a6]'}`}><StoreIcon size={24} className={activeTab === 'puesto' ? 'fill-[#fff0e8]' : ''} /><span className={`text-[10px] ${activeTab === 'puesto' ? 'font-extrabold' : 'font-medium'}`}>{t.puestoTab}</span></button>
       </nav>
 
-      {editingItem && <BottomSheet onClose={() => setEditingItem(null)}><EditPriceCaseraSheet item={editingItem} onSave={saveItem} onClose={() => setEditingItem(null)} /></BottomSheet>}
+      {editingItem && <BottomSheet onClose={() => setEditingItem(null)}><EditPriceCaseraSheet item={editingItem} t={t} onSave={saveItem} onClose={() => setEditingItem(null)} /></BottomSheet>}
     </main>
   )
 }
@@ -519,7 +366,6 @@ function CaseraPedidosList({ pedidos, onBack, onArmar }: { pedidos: PedidoClient
           <div><h1 className="font-display text-[18px] font-extrabold text-[#3A4B40]">Cuaderno de Pedidos</h1><p className="text-[11px] text-[#7a8a80]">Revisa qué armar hoy</p></div>
         </div>
       </header>
-      
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <div className="flex flex-col gap-4">
           {pedidos.map(p => (
@@ -553,9 +399,7 @@ function CaseraArmarFoto({ pedido, onBack, onConfirm }: { pedido: PedidoCliente,
     <main className="flex h-[100dvh] w-full flex-col bg-[#111814] text-white">
       <header className="flex flex-col bg-[#111814] px-5 py-5 text-white">
         <div className="mb-4 flex items-center">
-          <div className="rounded-[10px] bg-white px-2 py-1 shadow-sm">
-             <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[20px] w-auto object-contain" />
-          </div>
+          <div className="rounded-[10px] bg-white px-2 py-1 shadow-sm"><img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[20px] w-auto object-contain" /></div>
         </div>
         <div className="flex items-center justify-between">
           <button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 active:scale-95"><X size={20}/></button>
@@ -563,7 +407,6 @@ function CaseraArmarFoto({ pedido, onBack, onConfirm }: { pedido: PedidoCliente,
           <div className="w-10" />
         </div>
       </header>
-      
       <div className="flex flex-col items-center px-6 pt-4 text-center">
         <h2 className="font-display text-[22px] font-extrabold">Canasta de {pedido.cliente}</h2>
         <p className="mt-2 text-[12px] text-white/70">Muestra qué bonita y fresca te quedó la canasta. El cliente recibirá esta foto.</p>
@@ -587,28 +430,17 @@ function CaseraArmarFoto({ pedido, onBack, onConfirm }: { pedido: PedidoCliente,
 function CaseraEditarInventario({ inventario, setInventario, onBack }: { inventario: ItemVenta[], setInventario: (inv: ItemVenta[]) => void, onBack: () => void }) {
   const [nuevoEmoji, setNuevoEmoji] = useState('')
   const [nuevoNombre, setNuevoNombre] = useState('')
-
-  const handleAdd = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!nuevoEmoji || !nuevoNombre) return;
-    const newItem: ItemVenta = { id: Date.now().toString(), nombre: nuevoNombre, emoji: nuevoEmoji, disponible: true, precio: 10, unidad: 'Kilo' }
-    setInventario([...inventario, newItem]);
-    setNuevoEmoji(''); setNuevoNombre('');
-  }
+  const handleAdd = (e: React.FormEvent) => { e.preventDefault(); if (!nuevoEmoji || !nuevoNombre) return; const newItem: ItemVenta = { id: Date.now().toString(), nombre: nuevoNombre, emoji: nuevoEmoji, disponible: true, precio: 10, unidad: 'Kilo' }; setInventario([...inventario, newItem]); setNuevoEmoji(''); setNuevoNombre(''); }
   const handleRemove = (id: string) => { setInventario(inventario.filter(item => item.id !== id)); }
-
   return (
     <main className="flex h-[100dvh] w-full flex-col bg-white">
       <header className="flex flex-col border-b border-[#f0f3eb] bg-white px-5 pb-4 pt-5">
-        <div className="mb-4 flex items-center">
-          <img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[24px] w-auto object-contain" />
-        </div>
+        <div className="mb-4 flex items-center"><img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[24px] w-auto object-contain" /></div>
         <div className="flex items-center gap-4">
           <button onClick={onBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f4f7f2] text-[#55695d] active:scale-95"><ChevronLeft size={20}/></button>
           <div><h1 className="font-display text-[18px] font-extrabold text-[#3A4B40]">Editar mi Puesto</h1><p className="text-[11px] text-[#7a8a80]">Agrega o quita verduras de tu lista</p></div>
         </div>
       </header>
-      
       <div className="flex-1 overflow-y-auto px-5 py-6">
         <form onSubmit={handleAdd} className="mb-8 rounded-[22px] border border-[#e4eadf] bg-[#f9fcf8] p-4 shadow-sm">
           <p className="mb-3 text-[11px] font-bold uppercase text-[#69796e]">Agregar nueva verdura</p>
@@ -616,19 +448,13 @@ function CaseraEditarInventario({ inventario, setInventario, onBack }: { inventa
             <input type="text" placeholder="🥬" maxLength={2} value={nuevoEmoji} onChange={e => setNuevoEmoji(e.target.value)} className="w-14 rounded-[14px] border border-[#dce3d6] bg-white text-center text-[20px] outline-none focus:border-[#719B5C]" required />
             <input type="text" placeholder="Ej. Lechuga Crespa" value={nuevoNombre} onChange={e => setNuevoNombre(e.target.value)} className="flex-1 rounded-[14px] border border-[#dce3d6] bg-white px-3 text-[13px] font-bold text-[#3A4B40] outline-none focus:border-[#719B5C]" required />
           </div>
-          <button type="submit" className="mt-3 flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#719B5C] py-3 text-[12px] font-bold text-white active:scale-[0.98]">
-            Agregar a la lista <PlusCircle size={16}/>
-          </button>
+          <button type="submit" className="mt-3 flex w-full items-center justify-center gap-2 rounded-[12px] bg-[#719B5C] py-3 text-[12px] font-bold text-white active:scale-[0.98]">Agregar a la lista <PlusCircle size={16}/></button>
         </form>
-
         <p className="mb-3 text-[11px] font-bold uppercase text-[#69796e]">Verduras en tu lista</p>
         <div className="flex flex-col gap-2">
           {inventario.map(item => (
             <div key={item.id} className="flex items-center justify-between rounded-[16px] border border-[#f0f3eb] p-3">
-              <div className="flex items-center gap-3">
-                <span className="text-[24px]">{item.emoji}</span>
-                <span className="font-display text-[14px] font-extrabold text-[#3A4B40]">{item.nombre}</span>
-              </div>
+              <div className="flex items-center gap-3"><span className="text-[24px]">{item.emoji}</span><span className="font-display text-[14px] font-extrabold text-[#3A4B40]">{item.nombre}</span></div>
               <button onClick={() => handleRemove(item.id)} className="flex h-10 w-10 items-center justify-center rounded-full bg-[#ffeaeb] text-[#E46A60] active:scale-95"><Trash2 size={16}/></button>
             </div>
           ))}
@@ -638,7 +464,7 @@ function CaseraEditarInventario({ inventario, setInventario, onBack }: { inventa
   )
 }
 
-function EditPriceCaseraSheet({ item, onSave, onClose }: { item: ItemVenta, onSave: (item: ItemVenta) => void, onClose: () => void }) {
+function EditPriceCaseraSheet({ item, t, onSave, onClose }: { item: ItemVenta, t: any, onSave: (item: ItemVenta) => void, onClose: () => void }) {
   const [precio, setPrecio] = useState(item.precio)
   const [unidad, setUnidad] = useState(item.unidad)
   const unidades = ['Kilo', 'Arroba', 'Cuartilla', 'Atado', 'Unidad', 'Libra']
@@ -650,8 +476,101 @@ function EditPriceCaseraSheet({ item, onSave, onClose }: { item: ItemVenta, onSa
       <div className="mb-6 flex flex-wrap gap-2">{unidades.map(u => (<button key={u} onClick={() => setUnidad(u)} className={`rounded-full px-4 py-2.5 text-[13px] font-bold transition-all ${unidad === u ? 'bg-[#F3793B] text-white shadow-md' : 'border border-[#e1e6de] bg-white text-[#56665c]'}`}>{u}</button>))}</div>
       <p className="mb-2 text-[12px] font-bold uppercase text-[#6e8074]">2. Precio por {unidad.toLowerCase()}</p>
       <div className="mb-8 flex items-center justify-between rounded-[24px] bg-[#f8faf7] p-3"><button onClick={() => setPrecio(Math.max(1, precio - 1))} className="flex h-16 w-16 items-center justify-center rounded-[18px] bg-white text-[#E46A60] shadow-sm active:scale-95"><Minus size={32} strokeWidth={3} /></button><div className="text-center"><span className="font-display text-[40px] font-extrabold text-[#3A4B40]">{precio}</span><span className="ml-1 text-[16px] font-bold text-[#8b9c91]">Bs</span></div><button onClick={() => setPrecio(precio + 1)} className="flex h-16 w-16 items-center justify-center rounded-[18px] bg-white text-[#719B5C] shadow-sm active:scale-95"><Plus size={32} strokeWidth={3} /></button></div>
-      <button onClick={() => onSave({ ...item, precio, unidad })} className="flex w-full items-center justify-center gap-2 rounded-[18px] bg-[#3A4B40] py-4 text-[14px] font-bold text-white shadow-lg active:scale-[0.98]">Guardar precio <CheckCircle2 size={18} /></button>
+      <button onClick={() => onSave({ ...item, precio, unidad })} className="flex w-full items-center justify-center gap-2 rounded-[18px] bg-[#3A4B40] py-4 text-[14px] font-bold text-white shadow-lg active:scale-[0.98]">{t.cambiarPrecio} <CheckCircle2 size={18} /></button>
     </>
+  )
+}
+
+// --- APP DEL DELIVERY ---
+interface Entrega { id: string; cliente: string; direccion: string; referencia: string; caseraInfo: string; estado: 'recojo' | 'transito' | 'entregado'; montoGanancia: number; }
+const entregasIniciales: Entrega[] = [
+  { id: 'E01', cliente: 'María López', direccion: 'Av. América esq. Potosí', referencia: 'Edificio Los Pinos, depto 4B. Tocar timbre.', caseraInfo: 'Doña Rosa · Puesto 42, La Cancha', estado: 'recojo', montoGanancia: 15 },
+  { id: 'E02', cliente: 'Familia Vargas', direccion: 'Av. Juan de la Rosa', referencia: 'Casa amarilla portón negro.', caseraInfo: 'Doña Carmen · Puesto 18, La Cancha', estado: 'transito', montoGanancia: 15 },
+]
+type DeliverySubView = 'none' | 'mapa' | 'foto-entrega'
+function DeliveryDashboard({ onLogout }: { onLogout: () => void }) {
+  const [activeTab, setActiveTab] = useState<'rutas' | 'ganancias'>('rutas')
+  const [entregas, setEntregas] = useState<Entrega[]>(entregasIniciales)
+  const [subView, setSubView] = useState<DeliverySubView>('none')
+  const [entregaActiva, setEntregaActiva] = useState<Entrega | null>(null)
+
+  if (subView === 'mapa' && entregaActiva) { return <DeliveryMapaScreen entrega={entregaActiva} onBack={() => setSubView('none')} onArrived={() => setSubView('foto-entrega')} /> }
+  if (subView === 'foto-entrega' && entregaActiva) { return <DeliveryFotoEntrega entrega={entregaActiva} onBack={() => setSubView('mapa')} onConfirm={() => { setEntregas(prev => prev.map(e => e.id === entregaActiva.id ? { ...e, estado: 'entregado' } : e)); setSubView('none'); setEntregaActiva(null); }} /> }
+
+  const entregasActivas = entregas.filter(e => e.estado !== 'entregado');
+  const entregasCompletadas = entregas.filter(e => e.estado === 'entregado');
+  const gananciasHoy = entregasCompletadas.reduce((sum, e) => sum + e.montoGanancia, 0);
+  const actualizarEstado = (id: string, nuevoEstado: Entrega['estado']) => { setEntregas(prev => prev.map(e => e.id === id ? { ...e, estado: nuevoEstado } : e)) }
+
+  return (
+    <main className="relative h-[100dvh] w-full overflow-hidden bg-[#f4f7f9] text-[#2c3e50]">
+      <div className="scrollbar-hide absolute inset-0 overflow-y-auto pb-[90px]">
+        <div className="bg-[#4A8BBA] px-6 pb-6 pt-6 text-white rounded-b-[30px] shadow-sm">
+          <div className="mb-4 flex items-center justify-between"><div className="rounded-[10px] bg-white px-2 py-1 shadow-sm"><img src="/tampu-wordmark.jpeg" alt="TAMPU" className="h-[22px] w-auto object-contain" /></div><button onClick={onLogout} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur-md transition-all active:scale-95"><UserRound size={18} className="text-white" /></button></div>
+          <div><div className="mb-1 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-[#a8d3f0]"><span className="h-2 w-2 animate-pulse rounded-full bg-[#6fe092]" /> En línea</div><h1 className="font-display text-[26px] font-extrabold tracking-tight">Ruta activa, Carlos</h1></div>
+        </div>
+        {activeTab === 'rutas' && (
+          <div className="px-5 pt-6">
+            <div className="mb-4 flex items-center justify-between"><h2 className="font-display text-[18px] font-extrabold text-[#2c3e50]">Tareas de hoy</h2><span className="rounded-full bg-[#e3f0f7] px-2.5 py-1 text-[10px] font-bold text-[#4A8BBA]">{entregasActivas.length} pendientes</span></div>
+            <div className="flex flex-col gap-4">
+              {entregasActivas.length === 0 ? (
+                <div className="flex flex-col items-center justify-center rounded-[22px] border border-[#e1e9ee] bg-white py-10 text-center shadow-sm"><CheckCircle2 size={40} className="mb-3 text-[#719B5C]" /><p className="font-display text-[16px] font-extrabold text-[#2c3e50]">¡Todo entregado!</p><p className="text-[12px] text-[#718596]">No hay más rutas por ahora.</p></div>
+              ) : (
+                entregasActivas.map(entrega => (
+                  <div key={entrega.id} className="rounded-[22px] border border-[#e1e9ee] bg-white p-5 shadow-sm">
+                    {entrega.estado === 'recojo' ? (
+                      <><div className="mb-3 flex items-center justify-between border-b border-[#f0f4f7] pb-3"><div className="flex items-center gap-2 rounded-full bg-[#fff0e8] px-2.5 py-1 text-[10px] font-bold text-[#F3793B]"><StoreIcon size={12}/> Recoger pedido</div><span className="text-[12px] font-extrabold text-[#4A8BBA]">+{entrega.montoGanancia} Bs</span></div><p className="text-[11px] font-bold uppercase tracking-wider text-[#718596]">Ir a:</p><p className="font-display text-[18px] font-extrabold text-[#2c3e50]">{entrega.caseraInfo}</p><p className="mt-1 text-[12px] text-[#718596]">Canasta para: <span className="font-bold text-[#2c3e50]">{entrega.cliente}</span></p><button onClick={() => actualizarEstado(entrega.id, 'transito')} className="mt-5 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#F3793B] py-3.5 text-[13px] font-bold text-white shadow-sm active:scale-95"><PackageCheck size={18}/> Ya recogí la canasta</button></>
+                    ) : (
+                      <><div className="mb-3 flex items-center justify-between border-b border-[#f0f4f7] pb-3"><div className="flex items-center gap-2 rounded-full bg-[#e3f0f7] px-2.5 py-1 text-[10px] font-bold text-[#4A8BBA]"><Navigation size={12}/> En camino</div><span className="text-[12px] font-extrabold text-[#4A8BBA]">+{entrega.montoGanancia} Bs</span></div><p className="text-[11px] font-bold uppercase tracking-wider text-[#718596]">Entregar a:</p><p className="font-display text-[18px] font-extrabold text-[#2c3e50]">{entrega.cliente}</p><div className="mt-2 flex items-start gap-2 rounded-[12px] bg-[#f4f7f9] p-3 text-[12px]"><MapPin size={16} className="mt-0.5 shrink-0 text-[#4A8BBA]"/><div><p className="font-bold text-[#2c3e50]">{entrega.direccion}</p><p className="mt-0.5 text-[#718596]">{entrega.referencia}</p></div></div><button onClick={() => { setEntregaActiva(entrega); setSubView('mapa'); }} className="mt-5 flex w-full items-center justify-center gap-2 rounded-[14px] bg-[#4A8BBA] py-3.5 text-[13px] font-bold text-white shadow-sm active:scale-95"><MapPinned size={18}/> Ver mapa y entregar</button></>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+        {activeTab === 'ganancias' && (
+          <div className="px-5 pt-6">
+            <h2 className="mb-4 font-display text-[18px] font-extrabold text-[#2c3e50]">Resumen de hoy</h2>
+            <div className="flex items-center justify-between rounded-[24px] bg-[#4A8BBA] p-6 text-white shadow-md"><div><p className="text-[12px] font-medium text-white/80">Ganancias generadas</p><p className="mt-1 font-display text-[36px] font-extrabold leading-none">{gananciasHoy} <span className="text-[18px] font-bold">Bs</span></p></div><div className="flex h-14 w-14 items-center justify-center rounded-full bg-white/20"><Banknote size={28}/></div></div>
+            <h3 className="mb-3 mt-8 font-display text-[15px] font-extrabold text-[#2c3e50]">Entregas completadas ({entregasCompletadas.length})</h3>
+            <div className="flex flex-col gap-3">
+              {entregasCompletadas.length === 0 ? (
+                <p className="text-[12px] text-[#718596]">Aún no has completado entregas hoy.</p>
+              ) : (
+                entregasCompletadas.map(entrega => (
+                  <div key={entrega.id} className="flex items-center justify-between rounded-[16px] border border-[#e1e9ee] bg-white p-4"><div className="flex items-center gap-3"><div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#e8f5ec] text-[#719B5C]"><Check size={18}/></div><div><p className="font-bold text-[#2c3e50]">{entrega.cliente}</p><p className="text-[10px] text-[#718596]">{entrega.direccion}</p></div></div><span className="font-display text-[14px] font-extrabold text-[#4A8BBA]">+{entrega.montoGanancia} Bs</span></div>
+                ))
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+      <nav className="absolute inset-x-0 bottom-0 z-20 flex h-[80px] items-center justify-around border-t border-[#e1e9ee] bg-[#ffffff] px-2 pb-4 pt-2 shadow-[0_-10px_30px_rgba(0,0,0,0.03)]"><button onClick={() => setActiveTab('rutas')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'rutas' ? 'text-[#4A8BBA]' : 'text-[#8da3b5]'}`}><MapIcon size={24} className={activeTab === 'rutas' ? 'fill-[#e3f0f7]' : ''} /><span className={`text-[10px] ${activeTab === 'rutas' ? 'font-extrabold' : 'font-medium'}`}>Rutas</span></button><button onClick={() => setActiveTab('ganancias')} className={`flex flex-col items-center gap-1.5 transition-all ${activeTab === 'ganancias' ? 'text-[#4A8BBA]' : 'text-[#8da3b5]'}`}><WalletCards size={24} className={activeTab === 'ganancias' ? 'fill-[#e3f0f7]' : ''} /><span className={`text-[10px] ${activeTab === 'ganancias' ? 'font-extrabold' : 'font-medium'}`}>Ganancias</span></button></nav>
+    </main>
+  )
+}
+
+function DeliveryMapaScreen({ entrega, onBack, onArrived }: { entrega: Entrega, onBack: () => void, onArrived: () => void }) {
+  return (
+    <main className="flex h-[100dvh] w-full flex-col bg-[#f4f7f9]">
+      <header className="absolute inset-x-0 top-0 z-10 flex items-center justify-between bg-white/90 px-5 py-4 backdrop-blur-md shadow-sm"><button onClick={onBack} className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#f0f4f7] text-[#4A8BBA] active:scale-95"><ChevronLeft size={20}/></button><div className="text-center"><p className="text-[10px] font-bold uppercase tracking-wider text-[#718596]">Navegando hacia</p><h1 className="font-display text-[16px] font-extrabold text-[#2c3e50]">{entrega.cliente}</h1></div><div className="w-10" /></header>
+      <div className="relative flex-1 bg-[#e9efdf] pt-20"><svg viewBox="0 0 360 400" className="absolute inset-0 h-full w-full object-cover" preserveAspectRatio="xMidYMid slice"><rect width="360" height="600" fill="#e8eddf"/><path d="M-20 42L380 192M-10 218L340-18M25-10L118 400M296-20L228 400M-20 121L380 68" stroke="#fcfdf8" strokeWidth="16"/><path d="M-20 42L380 192M-10 218L340-18M25-10L118 400M296-20L228 400M-20 121L380 68" stroke="#d4dfcb" strokeWidth="1.4" strokeDasharray="5 4"/><path d="M125 190 L180 120 L240 85" fill="none" stroke="#4A8BBA" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round"/><text x="186" y="196" fill="#74846d" fontSize="9" fontFamily="DM Sans" fontWeight="600" transform="rotate(20 186 196)">Ruta sugerida</text></svg><div className="absolute left-[30%] top-[45%] flex h-10 w-10 items-center justify-center rounded-full border-4 border-white bg-[#4A8BBA] text-white shadow-lg"><Bike size={18} fill="currentColor"/></div><div className="absolute left-[62%] top-[18%] flex h-8 w-8 items-center justify-center rounded-full border-[3px] border-white bg-[#719B5C] text-white shadow-lg"><MapPin size={14} fill="currentColor"/></div></div>
+      <div className="rounded-t-[30px] bg-white px-6 pb-8 pt-6 shadow-[0_-20px_40px_rgba(0,0,0,0.08)] z-20"><div className="mb-4 flex items-start gap-3"><div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-[#f0f4f7] text-[#4A8BBA]"><MapPin size={24}/></div><div><p className="font-display text-[16px] font-extrabold text-[#2c3e50]">{entrega.direccion}</p><p className="mt-0.5 text-[12px] text-[#718596]">{entrega.referencia}</p></div></div><button onClick={onArrived} className="flex w-full items-center justify-center gap-2 rounded-[16px] bg-[#4A8BBA] py-4 text-[14px] font-bold text-white shadow-lg active:scale-[0.98]">Ya llegué, entregar pedido <CheckCircle2 size={18}/></button></div>
+    </main>
+  )
+}
+
+function DeliveryFotoEntrega({ entrega, onBack, onConfirm }: { entrega: Entrega, onBack: () => void, onConfirm: () => void }) {
+  const [tomandoFoto, setTomandoFoto] = useState(false);
+  const handleConfirm = () => { setTomandoFoto(true); setTimeout(() => onConfirm(), 1200); }
+  return (
+    <main className="flex h-[100dvh] w-full flex-col bg-[#1a232b] text-white">
+      <header className="flex items-center justify-between px-5 py-5"><button onClick={onBack} className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 active:scale-95"><ArrowLeft size={20}/></button><p className="text-[12px] font-bold tracking-wider text-white/70">EVIDENCIA DE ENTREGA</p><div className="w-10" /></header>
+      <div className="flex flex-col items-center px-6 pt-4 text-center"><h2 className="font-display text-[22px] font-extrabold">Canasta en destino</h2><p className="mt-2 text-[12px] text-white/70">Toma una foto de la canasta en la puerta o en manos de {entrega.cliente}.</p></div>
+      <div className="mx-6 mt-8 flex flex-1 flex-col items-center justify-center rounded-[32px] border-4 border-dashed border-white/20 bg-white/5">{tomandoFoto ? (<div className="flex flex-col items-center gap-3"><div className="h-10 w-10 animate-spin rounded-full border-4 border-white/20 border-t-[#4A8BBA]" /><p className="text-[12px] font-bold text-white/80">Confirmando entrega...</p></div>) : (<><Camera size={64} className="mb-4 text-white/30" /><p className="text-[14px] font-bold text-white/50">Toca para abrir cámara</p></>)}</div>
+      <div className="p-6 pb-10"><button disabled={tomandoFoto} onClick={handleConfirm} className="flex w-full items-center justify-center gap-2 rounded-[20px] bg-[#4A8BBA] py-5 text-[14px] font-bold text-white shadow-lg active:scale-[0.98] disabled:opacity-70"><CheckCircle2 size={20}/> {tomandoFoto ? 'Finalizando...' : 'Simular foto y finalizar'}</button></div>
+    </main>
   )
 }
 
